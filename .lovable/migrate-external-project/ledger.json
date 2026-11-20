@@ -1,0 +1,65 @@
+[
+ {
+  "capability": "code",
+  "source": "github rdxbotv4-creator/just-saying-hi",
+  "outcome": "migrate",
+  "status": "verified",
+  "next_action": ""
+ },
+ {
+  "capability": "schema",
+  "source": "drizzle/migrations/0000_novels_forever_core.sql",
+  "outcome": "migrate",
+  "status": "verified",
+  "next_action": ""
+ },
+ {
+  "capability": "records",
+  "source": "novel_stats, reviews, feedback, novel_pdfs, admin_emails",
+  "outcome": "migrate",
+  "status": "pending",
+  "next_action": "owner exports CSV/JSON of these tables from the original project's Cloud > Database"
+ },
+ {
+  "capability": "auth identities",
+  "source": "admin sign-in on /auth (email+password, Google)",
+  "outcome": "migrate",
+  "status": "pending",
+  "next_action": "owner signs up on /auth here, then gets admin role"
+ },
+ {
+  "capability": "authorization",
+  "source": "user_roles + has_role + admin_emails trigger",
+  "outcome": "migrate",
+  "status": "verified",
+  "next_action": ""
+ },
+ {
+  "capability": "uploaded file bytes",
+  "source": "private bucket novel-pdfs",
+  "outcome": "migrate",
+  "status": "pending",
+  "next_action": "bucket created; owner re-uploads PDFs via admin page"
+ },
+ {
+  "capability": "AI chat",
+  "source": "/api/chat via external Anabot service with local catalog fallback",
+  "outcome": "preserve",
+  "status": "pending",
+  "next_action": "verify in browser"
+ },
+ {
+  "capability": "schedules/webhooks",
+  "source": "none detected",
+  "outcome": "none",
+  "status": "verified",
+  "next_action": ""
+ },
+ {
+  "capability": "secrets",
+  "source": "none required",
+  "outcome": "none",
+  "status": "verified",
+  "next_action": ""
+ }
+]

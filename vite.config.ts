@@ -8,6 +8,7 @@
 // hosting already compresses at the edge.
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   tanstackStart: {
@@ -15,4 +16,57 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  plugins: [
+    // Offline app shell. Registration happens only in src/lib/pwa.ts (never in dev/preview).
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: null,
+      devOptions: { enabled: false },
+      filename: "sw.js",
+      manifest: false, // public/manifest.webmanifest is the manifest
+      workbox: {
+        globPatterns: ["**/*.{js,mjs,css,woff2,png,svg,ico,webp,jpg,webmanifest}"],
+        // Server bundles are never fetched by the browser; precaching them only blows past the size limit.
+        globIgnores: ["**/server/**", "**/shikijs__langs*", "**/mermaid+uuid*", "**/cytoscape*"],
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
+        navigateFallback: null,
+        runtimeCaching: [
+          {
+            // Pages: always try the network first, fall back to the last copy when offline.
+            urlPattern: ({ request, url }) =>
+              request.mode === "navigate" && !url.pathname.startsWith("/~oauth") && !url.pathname.startsWith("/api/"),
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "nf-pages",
+              networkTimeoutSeconds: 4,
+              expiration: { maxEntries: 150 },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+          {
+            urlPattern: ({ url }) => url.origin === "https://i.ytimg.com",
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "nf-covers",
+              expiration: { maxEntries: 600, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: ({ url }) =>
+              url.origin === "https://fonts.googleapis.com" || url.origin === "https://fonts.gstatic.com",
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "nf-fonts",
+              expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
+      },
+    }),
+  ],
 });

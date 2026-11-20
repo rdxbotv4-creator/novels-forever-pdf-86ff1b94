@@ -1,0 +1,26 @@
+# Novels Forever website — roadmap
+
+- [ ] Fetch all channel videos + playlists, group into novels (no video in wrong novel)
+- [ ] Design system, logo, book-opening intro animation, 3D hero
+- [x] Home, Novels (category-wise), Novel detail with episode player, Authors, Playlists
+- [x] Lovable Cloud: views, ratings, reviews, feedback, PDF downloads count
+- [ ] PDF section: owner admin upload (read + download + counter), "Find PDF" Google search button per novel
+- [x] AI agent that knows all novels (fresh chat each visit, no saving)
+- [x] Vercel-compatible librarian through Anabot, with instant catalog answers when that service is down
+- [x] Show Nadia Nawaz as channel owner and narrator on the website and in agent answers
+- [x] Support/contact: owner Sardar Rdx, WhatsApp 923301068874
+- [ ] Vercel deploy notes
+- [ ] Username-only "login" for reviews (no password), with bouncing arrow animation pointing at Login
+- [ ] "Visit our YouTube channel" popup
+- [ ] Logo lockup with the name "Novels Forever"
+- [ ] Admin page for PDF upload — blocked: waiting for owner's admin email
+- [ ] Installable app (PWA) with offline support (published site only), incl. offline reading of opened PDFs
+- [ ] Bring over existing reviews, feedback, counts and PDF files from the original project — waiting on the owner's data export
+- [ ] Make the owner's account admin once they sign up on /auth (owner didn't share an email)
+- [x] Copy project from GitHub (kind-companion) into this project with its own Lovable Cloud
+- [ ] Bring over old reviews, feedback, counts and PDFs — waiting on the owner's data export
+- [x] Kutab Nagri PDFs: declined to download/re-host (authors' copyright); owner uploads PDFs he has rights to
+- [ ] Admin: upload many PDFs at once (makes owner uploads easy)
+- [ ] In-site book reader for PDFs + "save for offline" + installable app (offline in published app only)
+- [x] Copy project from GitHub (just-saying-hi) into this project with its own Lovable Cloud
+- [ ] Bring over reviews, feedback, counts and PDFs from the just-saying-hi project — waiting on the owner's data export
