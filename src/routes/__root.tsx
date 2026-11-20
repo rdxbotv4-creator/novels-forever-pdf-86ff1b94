@@ -19,6 +19,8 @@ import { LoginDialog } from "@/components/site/LoginDialog";
 import { IntroOverlay } from "@/components/site/IntroOverlay";
 import { YoutubePopup } from "@/components/site/YoutubePopup";
 import { AgentLauncher } from "@/components/site/AgentLauncher";
+import { MobileTabBar } from "@/components/site/MobileTabBar";
+import { setupServiceWorker } from "@/lib/pwa";
 
 function NotFoundComponent() {
   return (
@@ -86,7 +88,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     // twitter:image here: every page without its own would inherit the root's preview image.
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "Novels Forever" },
       { name: "theme-color", content: "#0f1d24" },
       { title: "Novels Forever — Urdu Audio Novel Library" },
       {
@@ -106,6 +112,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -138,10 +145,14 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    setupServiceWorker();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <IntroOverlay />
-      <div className="flex min-h-screen flex-col">
+      <div className="pb-tabbar flex min-h-screen flex-col lg:pb-0">
         <SiteHeader />
         <main className="flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
@@ -151,6 +162,7 @@ function RootComponent() {
       </div>
       <LoginDialog />
       <YoutubePopup />
+      <MobileTabBar />
       <AgentLauncher />
       <Toaster position="top-center" />
     </QueryClientProvider>

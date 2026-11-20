@@ -50,7 +50,7 @@ export default function AgentPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="bg-card-grad gold-frame fixed bottom-4 right-4 z-50 flex h-[min(640px,calc(100vh-2rem))] w-[calc(100vw-2rem)] max-w-md flex-col overflow-hidden rounded-2xl shadow-glow">
+    <div className="bg-card-grad gold-frame fixed bottom-4 right-4 z-50 flex h-[min(640px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-md flex-col overflow-hidden rounded-2xl shadow-glow">
       <div className="flex items-center gap-3 border-b border-border px-4 py-3">
         <img src={logo} alt="" className="h-10 w-10" />
         <div className="flex-1">

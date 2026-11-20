@@ -32,7 +32,7 @@ export function IntroOverlay() {
       role="presentation"
     >
       <div className="intro-book relative h-64 w-48 sm:h-80 sm:w-60">
-        <div className="intro-glow absolute -inset-16 rounded-full bg-primary/25 blur-3xl" />
+        <div className="intro-glow absolute -inset-16 rounded-full bg-glow-radial" />
         {/* inner pages */}
         <div className="absolute inset-0 rounded-r-lg bg-parchment shadow-book" />
         <div className="absolute inset-0 flex items-center justify-center">

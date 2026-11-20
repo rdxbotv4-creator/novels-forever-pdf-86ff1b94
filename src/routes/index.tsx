@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowRight, FileText, Headphones, MessageSquareText, Search, Users, Youtube } from "lucide-react";
+import { ArrowRight, FileText, Headphones, MessageSquareText, Mic, Search, Users, Youtube } from "lucide-react";
 
 import heroImg from "@/assets/hero-library.jpg";
 import { Embers } from "@/components/site/Embers";
@@ -59,12 +59,31 @@ function Home() {
       <Hero />
 
       {/* 3D ring */}
-      <section className="relative overflow-hidden py-20" aria-label="Most popular novels">
+      <section className="relative overflow-hidden py-14 md:py-20" aria-label="Most popular novels">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6">
           <p className="text-xs uppercase tracking-[0.3em] text-primary/80">The golden shelf</p>
           <h2 className="mt-2 font-display text-4xl font-semibold md:text-5xl">Most loved by readers</h2>
         </div>
-        <div className="ring-stage relative mx-auto mt-14 h-[300px] w-full [--ring-r:300px] md:h-[340px] md:[--ring-r:480px]">
+        {/* Phones: a light scrolling shelf that stays smooth on every device */}
+        <div className="shelf-mask relative mt-10 overflow-hidden md:hidden">
+          <div className="shelf-track flex w-max gap-4 pr-4">
+            {[...ring, ...ring].map((n, i) => (
+              <Link
+                key={`${n.slug}-${i}`}
+                to="/novels/$slug"
+                params={{ slug: n.slug }}
+                aria-hidden={i >= ring.length || undefined}
+                tabIndex={i >= ring.length ? -1 : undefined}
+                className="relative block h-48 w-32 shrink-0 overflow-hidden rounded-md border border-primary/30 bg-leather shadow-book"
+              >
+                <img src={coverOf(n)} alt="" loading="lazy" className="h-full w-full scale-[1.35] object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
+                <span className="absolute inset-x-0 bottom-0 p-2.5 font-display text-sm leading-tight">{n.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div className="ring-stage relative mx-auto mt-14 hidden h-[300px] w-full [--ring-r:300px] md:block md:h-[340px] md:[--ring-r:480px]">
           <div className="ring absolute left-1/2 top-0 h-[240px] w-[150px] -translate-x-1/2 md:h-[280px] md:w-[180px]">
             {ring.map((n, i) => (
               <Link
@@ -94,7 +113,7 @@ function Home() {
             </Link>
           </Button>
         </SectionHeading>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
           {categories.map((c, i) => {
             const sample = novelsInCategory(c.slug)[0];
             return (
@@ -102,7 +121,7 @@ function Home() {
                 key={c.slug}
                 to="/novels"
                 search={{ category: c.slug }}
-                className="group relative h-36 overflow-hidden rounded-xl border border-border bg-card-grad p-5 transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-gold"
+                className="group relative min-h-36 overflow-hidden rounded-xl border border-border bg-card-grad p-4 sm:p-5 transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-gold"
               >
                 {sample && (
                   <img
@@ -112,12 +131,12 @@ function Home() {
                     className="absolute inset-0 h-full w-full object-cover opacity-15 transition-opacity duration-500 group-hover:opacity-30"
                   />
                 )}
-                <div className="relative flex h-full flex-col justify-between">
+                <div className="relative flex h-full min-h-28 flex-col justify-between gap-3">
                   <span className="text-2xl" aria-hidden>
                     {CAT_ICONS[i] ?? "📖"}
                   </span>
                   <div>
-                    <h3 className="font-display text-xl font-semibold leading-tight">{c.name}</h3>
+                    <h3 className="font-display text-lg font-semibold leading-tight sm:text-xl">{c.name}</h3>
                     <p className="text-xs text-muted-foreground">{c.count} novels</p>
                   </div>
                 </div>
@@ -205,10 +224,10 @@ function Home() {
 
       {/* YouTube CTA */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <div className="gold-frame relative overflow-hidden rounded-2xl bg-card-grad p-10 text-center md:p-16">
+        <div className="gold-frame relative overflow-hidden rounded-2xl bg-card-grad px-5 py-10 text-center md:p-16">
           <Embers />
           <Youtube className="relative mx-auto h-14 w-14 text-youtube" />
-          <h2 className="relative mt-4 font-display text-4xl font-semibold md:text-5xl">
+          <h2 className="relative mt-4 font-display text-3xl font-semibold sm:text-4xl md:text-5xl">
             Listen on <span className="text-gold">{channel.name}</span>
           </h2>
           <p className="relative mx-auto mt-3 max-w-xl text-muted-foreground">
@@ -238,17 +257,17 @@ function Hero() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/70 to-background" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/60 to-transparent" />
       <Embers />
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pb-24 pt-16 sm:px-6 md:pt-24 lg:grid-cols-[1.1fr_1fr]">
+      <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-10 sm:px-6 md:pb-24 md:pt-24 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-ink/40 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-primary">
             <Headphones className="h-3.5 w-3.5" /> Urdu audio novels
           </p>
-          <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.02] sm:text-6xl lg:text-7xl">
+          <h1 className="mt-6 font-display text-[2.75rem] font-semibold leading-[1.02] sm:text-6xl lg:text-7xl">
             Every story,
             <br />
             <span className="text-gold animate-shine">one magical library</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+          <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
             All {totalNovels} novels from the Novels Forever channel, neatly arranged by category,
             writer and playlist. Press play and lose yourself in the story.
           </p>
@@ -269,15 +288,50 @@ function Hero() {
                 className="h-12 bg-ink/60 pl-10 text-base"
               />
             </div>
-            <Button type="submit" variant="gold" size="xl">
+            <Button type="submit" variant="gold" size="xl" className="px-5 sm:px-7">
               Search
             </Button>
           </form>
-          <div className="mt-10 grid max-w-lg grid-cols-3 gap-4">
+          <div className="mt-8 grid max-w-lg grid-cols-3 gap-2.5 sm:mt-10 sm:gap-4">
             <Stat value={String(totalNovels)} label="Novels" />
             <Stat value={totalVideos.toLocaleString()} label="Episodes" />
             <Stat value={formatViews(totalViews)} label="Listens" />
           </div>
+          <NarratorCard />
+        </div>
+
+        {/* Phones & tablets: fanned book stack (transform-only animation, smooth on older phones) */}
+        <div className="relative mx-auto h-60 w-full max-w-xs lg:hidden" aria-hidden>
+          {featured.map((n, i) => {
+            const pos = [
+              { x: "-58%", r: -10, top: "18%", z: 1 },
+              { x: "-50%", r: 0, top: "0%", z: 3 },
+              { x: "-42%", r: 10, top: "18%", z: 1 },
+            ][i]!;
+            return (
+              <Link
+                key={n.slug}
+                to="/novels/$slug"
+                params={{ slug: n.slug }}
+                tabIndex={-1}
+                className="absolute left-1/2 w-32 sm:w-36"
+                style={{
+                  top: pos.top,
+                  zIndex: pos.z,
+                  transform: `translateX(calc(${pos.x} + ${(i - 1) * 70}%)) rotate(${pos.r}deg)`,
+                }}
+              >
+                <div className={i === 1 ? "animate-float" : "animate-float-slow"} style={{ animationDelay: `${i * -2}s` }}>
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-[4px_8px_8px_4px] border border-primary/30 bg-leather shadow-book">
+                    <img src={coverOf(n)} alt="" className="h-full w-full scale-[1.35] object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
+                    <span className="absolute inset-x-0 bottom-0 p-2.5 font-display text-sm leading-tight">{n.name}</span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+          <div className="absolute inset-x-6 bottom-0 h-8 rounded-full bg-glow-radial" />
         </div>
 
         <div className="perspective relative mx-auto hidden h-[460px] w-full max-w-md lg:block" aria-hidden>
@@ -319,11 +373,29 @@ function Hero() {
   );
 }
 
+function NarratorCard() {
+  return (
+    <div className="mt-6 flex max-w-lg items-center gap-4 rounded-2xl border border-primary/30 bg-ink/50 p-3 pr-5 shadow-gold sm:mt-8">
+      <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gold font-display text-2xl font-bold text-primary-foreground ring-2 ring-primary/40 ring-offset-2 ring-offset-background">
+        {CHANNEL_OWNER.name.charAt(0)}
+        <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-primary/50 bg-card text-primary">
+          <Mic className="h-3.5 w-3.5" />
+        </span>
+      </span>
+      <div className="min-w-0">
+        <p className="text-[10px] uppercase tracking-[0.25em] text-primary/80">Every story in the voice of</p>
+        <p className="truncate font-display text-2xl font-semibold leading-tight text-gold">{CHANNEL_OWNER.name}</p>
+        <p className="text-xs text-muted-foreground">{CHANNEL_OWNER.role}</p>
+      </div>
+    </div>
+  );
+}
+
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-xl border border-border bg-ink/40 p-4">
-      <p className="font-display text-3xl font-semibold text-gold">{value}</p>
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
+    <div className="rounded-xl border border-border bg-ink/40 p-3 sm:p-4">
+      <p className="font-display text-2xl font-semibold text-gold sm:text-3xl">{value}</p>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground sm:text-xs">{label}</p>
     </div>
   );
 }

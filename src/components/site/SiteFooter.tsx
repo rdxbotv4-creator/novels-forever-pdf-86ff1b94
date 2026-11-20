@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { MessageCircle, Youtube } from "lucide-react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
+import { InstallAppButton } from "./InstallAppButton";
 import { CHANNEL_OWNER, OWNER, channel, totalNovels, totalVideos, whatsappLink } from "@/lib/catalog";
 
 export function SiteFooter() {
@@ -45,6 +46,7 @@ export function SiteFooter() {
                 <Youtube /> YouTube
               </a>
             </Button>
+            <InstallAppButton />
           </div>
         </div>
       </div>

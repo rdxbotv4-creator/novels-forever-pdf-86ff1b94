@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
  * The only place that registers the offline service worker.
  * It never registers in development, inside the editor preview, or with ?sw=off.
  */
-const PROJECT_ID = "3d605b73-2abe-42bb-b17c-782bea68149d";
+const PROJECT_ID = "4de61f5f-a2a8-4752-ac2d-b9e0832af542";
 const PREVIEW_LABEL = /^(?:id-preview|preview)(?:-[a-z0-9]+)?--.+$/;
 const LOVABLE_HOSTS = [".lovable.app", ".gpt-eng.com", ".gptengineer.run"];
 
