@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowRight, FileText, Headphones, MessageSquareText, Mic, Search, Users, Youtube } from "lucide-react";
 
 import heroImg from "@/assets/hero-library.jpg";
-import nadiaPhoto from "@/assets/nadia-nawaz.jpg.asset.json";
+import nadiaPhoto from "@/assets/nadia-nawaz-round.jpg.asset.json";
 import { Embers } from "@/components/site/Embers";
 import { NovelCard, NovelGrid, SectionHeading } from "@/components/site/NovelCard";
 import { Stars } from "@/components/site/Stars";
@@ -377,11 +377,11 @@ function Hero() {
 function NarratorCard() {
   return (
     <div className="mt-6 flex max-w-lg items-center gap-4 rounded-2xl border border-primary/30 bg-ink/50 p-3 pr-5 shadow-gold sm:mt-8">
-      <span className="relative block h-14 w-14 shrink-0">
+      <span className="relative block h-16 w-16 shrink-0 sm:h-[4.5rem] sm:w-[4.5rem]">
         <img
           src={nadiaPhoto.url}
           alt={CHANNEL_OWNER.name}
-          className="h-full w-full rounded-full object-cover ring-2 ring-primary/40 ring-offset-2 ring-offset-background"
+          className="h-full w-full rounded-full object-cover object-center ring-2 ring-primary/60 ring-offset-2 ring-offset-background"
         />
         <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-primary/50 bg-card text-primary">
           <Mic className="h-3.5 w-3.5" />
