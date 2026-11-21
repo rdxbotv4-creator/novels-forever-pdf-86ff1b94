@@ -46,6 +46,20 @@ export const allReviewsQuery = () =>
     },
   });
 
+/** Full PDF list for the owner area (includes storage locations; admins only). */
+export const adminPdfListQuery = () =>
+  queryOptions({
+    queryKey: ["novel-pdf", "admin"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("novel_pdfs")
+        .select("novel_slug, file_path, file_size, uploaded_at")
+        .order("uploaded_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
 export async function uploadNovelPdf(slug: string, file: File) {
   if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
     throw new Error("Only PDF files can be uploaded.");

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { pdfUrl } from "./community";
 
 /**
  * Books opened in the reader are kept on the reader's device (browser Cache Storage),
@@ -108,20 +108,15 @@ export async function loadBook(slug: string, onProgress?: (pct: number) => void)
   if (local) return { kind: "ok", data: local, fromDevice: true, saved: true };
   if (!navigator.onLine) return { kind: "offline-missing" };
 
-  const { data: row, error } = await supabase
-    .from("novel_pdfs")
-    .select("file_path")
-    .eq("novel_slug", slug)
-    .maybeSingle();
-  if (error) throw error;
-  if (!row) return { kind: "no-pdf" };
+  let url: string;
+  try {
+    url = await pdfUrl(slug, false);
+  } catch (err) {
+    if (err instanceof Error && err.message === "No PDF for this novel.") return { kind: "no-pdf" };
+    throw err;
+  }
 
-  const { data: signed, error: signErr } = await supabase.storage
-    .from("novel-pdfs")
-    .createSignedUrl(row.file_path, 60 * 10);
-  if (signErr) throw signErr;
-
-  const res = await fetch(signed.signedUrl);
+  const res = await fetch(url);
   if (!res.ok) throw new Error(`Download failed (${res.status})`);
   const data = await readWithProgress(res, onProgress);
   const saved = await saveBook(slug, data);

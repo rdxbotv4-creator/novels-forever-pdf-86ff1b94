@@ -65,7 +65,7 @@ function NovelPage() {
   const openPdf = async (download: boolean) => {
     if (!pdf) return;
     try {
-      const url = await pdfUrl(pdf.file_path, download);
+      const url = await pdfUrl(slug, download);
       void bumpStat(slug, download ? "pdf_download" : "pdf_read").then(() =>
         qc.invalidateQueries({ queryKey: ["novel-stats", slug] }),
       );

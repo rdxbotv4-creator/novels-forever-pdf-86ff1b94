@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getPdfLink } from "./pdf-links.functions";
 
 export type StatKind = "view" | "pdf_read" | "pdf_download";
 
@@ -7,25 +8,9 @@ export const statsQuery = (slug: string) =>
   queryOptions({
     queryKey: ["novel-stats", slug],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("novel_stats")
-        .select("views, pdf_reads, pdf_downloads")
-        .eq("novel_slug", slug)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("get_novel_stats", { _slug: slug });
       if (error) throw error;
-      return data ?? { views: 0, pdf_reads: 0, pdf_downloads: 0 };
-    },
-  });
-
-export const allStatsQuery = () =>
-  queryOptions({
-    queryKey: ["novel-stats", "all"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("novel_stats")
-        .select("novel_slug, views, pdf_reads, pdf_downloads");
-      if (error) throw error;
-      return data ?? [];
+      return data?.[0] ?? { views: 0, pdf_reads: 0, pdf_downloads: 0 };
     },
   });
 
@@ -33,13 +18,10 @@ export const ratingQuery = (slug: string) =>
   queryOptions({
     queryKey: ["novel-rating", slug],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("novel_ratings")
-        .select("avg_rating, rating_count")
-        .eq("novel_slug", slug)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("get_novel_rating", { _slug: slug });
       if (error) throw error;
-      return { avg: Number(data?.avg_rating ?? 0), count: data?.rating_count ?? 0 };
+      const row = data?.[0];
+      return { avg: Number(row?.avg_rating ?? 0), count: row?.rating_count ?? 0 };
     },
   });
 
@@ -47,12 +29,7 @@ export const reviewsQuery = (slug: string) =>
   queryOptions({
     queryKey: ["reviews", slug],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("reviews")
-        .select("id, name, rating, comment, created_at")
-        .eq("novel_slug", slug)
-        .order("created_at", { ascending: false })
-        .limit(50);
+      const { data, error } = await supabase.rpc("get_novel_reviews", { _slug: slug });
       if (error) throw error;
       return data ?? [];
     },
@@ -62,27 +39,9 @@ export const latestReviewsQuery = () =>
   queryOptions({
     queryKey: ["reviews", "latest"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("reviews")
-        .select("id, novel_slug, name, rating, comment, created_at")
-        .order("created_at", { ascending: false })
-        .limit(6);
+      const { data, error } = await supabase.rpc("get_latest_reviews");
       if (error) throw error;
       return data ?? [];
-    },
-  });
-
-export const pdfQuery = (slug: string) =>
-  queryOptions({
-    queryKey: ["novel-pdf", slug],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("novel_pdfs")
-        .select("novel_slug, file_path, file_size, uploaded_at")
-        .eq("novel_slug", slug)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
     },
   });
 
@@ -90,13 +49,17 @@ export const pdfListQuery = () =>
   queryOptions({
     queryKey: ["novel-pdf", "all"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("novel_pdfs")
-        .select("novel_slug, file_path, file_size, uploaded_at")
-        .order("uploaded_at", { ascending: false });
+      const { data, error } = await supabase.rpc("list_novel_pdfs");
       if (error) throw error;
       return data ?? [];
     },
+  });
+
+export const pdfQuery = (slug: string) =>
+  queryOptions({
+    ...pdfListQuery(),
+    select: (rows: Awaited<ReturnType<NonNullable<ReturnType<typeof pdfListQuery>["queryFn"]>>>) =>
+      rows.find((r) => r.novel_slug === slug) ?? null,
   });
 
 export async function bumpStat(slug: string, kind: StatKind) {
@@ -104,12 +67,11 @@ export async function bumpStat(slug: string, kind: StatKind) {
   if (error) console.warn("stat not counted", error.message);
 }
 
-export async function pdfUrl(filePath: string, download: boolean) {
-  const { data, error } = await supabase.storage
-    .from("novel-pdfs")
-    .createSignedUrl(filePath, 60 * 60, download ? { download: true } : undefined);
-  if (error) throw error;
-  return data.signedUrl;
+/** Short-lived link to a library PDF, issued by the website (the storage bucket is private). */
+export async function pdfUrl(slug: string, download: boolean) {
+  const { path } = await getPdfLink({ data: { slug, download } });
+  if (!path) throw new Error("No PDF for this novel.");
+  return `${String(import.meta.env['VITE_SUPABASE_URL']).replace(/\/+$/, "")}${path}`;
 }
 
 export async function addReview(input: {

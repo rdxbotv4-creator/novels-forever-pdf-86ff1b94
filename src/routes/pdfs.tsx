@@ -29,9 +29,9 @@ function PdfsPage() {
   const [q, setQ] = useState("");
   const found = q.trim() ? searchNovels(q, byViews).slice(0, 12) : [];
 
-  const open = async (slug: string, filePath: string, download: boolean) => {
+  const open = async (slug: string, download: boolean) => {
     try {
-      const url = await pdfUrl(filePath, download);
+      const url = await pdfUrl(slug, download);
       void bumpStat(slug, download ? "pdf_download" : "pdf_read").then(() =>
         qc.invalidateQueries({ queryKey: ["novel-stats", slug] }),
       );
@@ -63,8 +63,8 @@ function PdfsPage() {
                     )}
                     {n?.author && <p className="text-sm text-muted-foreground">by {n.author}</p>}
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <Button size="sm" variant="gold" onClick={() => void open(p.novel_slug, p.file_path, false)}><BookOpen /> Read</Button>
-                      <Button size="sm" variant="glass" onClick={() => void open(p.novel_slug, p.file_path, true)}><Download /> Download</Button>
+                      <Button size="sm" variant="gold" onClick={() => void open(p.novel_slug, false)}><BookOpen /> Read</Button>
+                      <Button size="sm" variant="glass" onClick={() => void open(p.novel_slug, true)}><Download /> Download</Button>
                     </div>
                   </div>
                 </li>

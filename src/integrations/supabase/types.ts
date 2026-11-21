@@ -153,12 +153,56 @@ export type Database = {
     }
     Functions: {
       bump_stat: { Args: { _kind: string; _slug: string }; Returns: undefined }
+      get_latest_reviews: {
+        Args: never
+        Returns: {
+          comment: string
+          created_at: string
+          id: string
+          name: string
+          novel_slug: string
+          rating: number
+        }[]
+      }
+      get_novel_rating: {
+        Args: { _slug: string }
+        Returns: {
+          avg_rating: number
+          rating_count: number
+        }[]
+      }
+      get_novel_reviews: {
+        Args: { _slug: string }
+        Returns: {
+          comment: string
+          created_at: string
+          id: string
+          name: string
+          rating: number
+        }[]
+      }
+      get_novel_stats: {
+        Args: { _slug: string }
+        Returns: {
+          pdf_downloads: number
+          pdf_reads: number
+          views: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      list_novel_pdfs: {
+        Args: never
+        Returns: {
+          file_size: number
+          novel_slug: string
+          uploaded_at: string
+        }[]
       }
     }
     Enums: {

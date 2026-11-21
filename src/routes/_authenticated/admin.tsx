@@ -5,9 +5,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { isAdminQuery, removeNovelPdf, uploadNovelPdf } from "@/lib/admin";
+import { adminPdfListQuery, isAdminQuery, removeNovelPdf, uploadNovelPdf } from "@/lib/admin";
 import { byViews, searchNovels } from "@/lib/catalog";
-import { pdfListQuery } from "@/lib/community";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -29,7 +28,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: isAdmin, isLoading } = useQuery(isAdminQuery(user.id));
-  const { data: pdfs } = useQuery(pdfListQuery());
+  const { data: pdfs } = useQuery({ ...adminPdfListQuery(), enabled: isAdmin === true });
   const [q, setQ] = useState("");
   const [busySlug, setBusySlug] = useState<string | null>(null);
   const list = searchNovels(q, byViews).slice(0, 30);
